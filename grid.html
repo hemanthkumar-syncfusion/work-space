@@ -3,93 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Data Grid</title>
+  <title>Syncfusion Data Grid with Paging</title>
+  <!-- Syncfusion EJ2 styles -->
+  <link href="https://cdn.syncfusion.com/ej2/28.1.33/material.css" rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { display: flex; justify-content: center; padding: 40px; background: #f4f6f8; }
-    .grid-container { width: 720px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); overflow: hidden; }
-    h2 { margin: 0; padding: 16px 20px; background: #1976d2; color: #fff; font-size: 18px; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #e0e0e0; }
-    th { background: #f0f4f8; color: #333; cursor: default; }
-    tr:nth-child(even) { background: #fafafa; }
-    tr:hover { background: #e8f0fe; }
-    .pager { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; font-size: 13px; color: #555; }
-    .pager .pages button {
-      min-width: 30px; margin: 0 3px; padding: 6px 10px;
-      border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer;
-    }
-    .pager .pages button:hover:not(:disabled) { background: #e8f0fe; border-color: #1976d2; }
-    .pager .pages button.active { background: #1976d2; color: #fff; border-color: #1976d2; }
-    .pager .pages button:disabled { opacity: 0.4; cursor: not-allowed; }
+    body { font-family: "Segoe UI", Arial, sans-serif; padding: 40px; background: #f4f6f8; }
+    h2 { margin: 0 0 16px; color: #333; }
+    #grid { max-width: 860px; }
   </style>
 </head>
 <body>
-  <div class="grid-container">
-    <h2>Employee Data Grid</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th><th>Name</th><th>Department</th><th>Designation</th><th>Salary</th>
-        </tr>
-      </thead>
-      <tbody id="gridBody"></tbody>
-    </table>
-    <div class="pager">
-      <span id="pageInfo"></span>
-      <div class="pages" id="pageButtons"></div>
-    </div>
-  </div>
+  <h2>Employee Data Grid</h2>
+  <div id="grid"></div>
 
+  <!-- Syncfusion EJ2 scripts -->
+  <script src="https://cdn.syncfusion.com/ej2/28.1.33/dist/ej2.min.js"></script>
   <script>
-    const data = [
-      { id: 1,  name: "Alice Johnson",  department: "HR",          designation: "Manager",           salary: 75000 },
-      { id: 2,  name: "Bob Smith",      department: "Engineering",  designation: "Senior Developer",  salary: 95000 },
-      { id: 3,  name: "Carol White",    department: "Finance",      designation: "Analyst",           salary: 68000 },
-      { id: 4,  name: "David Brown",    department: "Engineering",  designation: "Developer",        salary: 82000 },
-      { id: 5,  name: "Emma Davis",     department: "Marketing",    designation: "Lead",              salary: 78000 },
-      { id: 6,  name: "Frank Miller",   department: "Sales",        designation: "Executive",         salary: 61000 },
-      { id: 7,  name: "Grace Wilson",   department: "Engineering",  designation: "QA Engineer",       salary: 70000 },
-      { id: 8,  name: "Henry Moore",    department: "Finance",      designation: "Accountant",        salary: 66000 },
-      { id: 9,  name: "Ivy Taylor",     department: "HR",           designation: "Recruiter",         salary: 58000 },
-      { id: 10, name: "Jack Anderson",  department: "Marketing",    designation: "Coordinator",       salary: 54000 },
+    // Inject the Page module so paging methods/features work
+    ej2.grids.Grid.Inject(ej2.grids.Page);
+
+    // 10 records, 5 columns
+    var employeeData = [
+      { OrderID: 10248, Customer: 'VINET', City: 'Berlin',    Country: 'Germany',    Total: 32.38 },
+      { OrderID: 10249, Customer: 'TOMSP', City: 'Madrid',    Country: 'Spain',     Total: 11.61 },
+      { OrderID: 10250, Customer: 'HANAR', City: 'Lyon',      Country: 'France',    Total: 65.83 },
+      { OrderID: 10251, Customer: 'VICTE', City: 'Rio',       Country: 'Brazil',    Total: 41.34 },
+      { OrderID: 10252, Customer: 'SUPRD', City: 'Bern',      Country: 'Switzerland', Total: 51.30 },
+      { OrderID: 10253, Customer: 'HANAR', City: 'Monza',    Country: 'Italy',     Total: 58.17 },
+      { OrderID: 10254, Customer: 'CHOPS', City: 'Bern',      Country: 'Switzerland', Total: 22.98 },
+      { OrderID: 10255, Customer: 'RICSU', City: 'Genève',   Country: 'Switzerland', Total: 148.33 },
+      { OrderID: 10256, Customer: 'WELLI', City: 'Resende',  Country: 'Brazil',    Total: 13.97 },
+      { OrderID: 10257, Customer: 'HILAA', City: 'San Cristóbal', Country: 'Venezuela', Total: 81.91 }
     ];
 
-    const pageSize = 5;
-    let currentPage = 1;
-    const totalPages = Math.ceil(data.length / pageSize);
-
-    function render() {
-      const start = (currentPage - 1) * pageSize;
-      const rows = data.slice(start, start + pageSize);
-
-      document.getElementById("gridBody").innerHTML = rows.map(r => `
-        <tr>
-          <td>${r.id}</td><td>${r.name}</td><td>${r.department}</td>
-          <td>${r.designation}</td><td>$${r.salary.toLocaleString()}</td>
-        </tr>`).join("");
-
-      document.getElementById("pageInfo").textContent =
-        `Showing ${start + 1}-${start + rows.length} of ${data.length} records`;
-
-      document.getElementById("pageButtons").innerHTML = `
-        <button ${currentPage === 1 ? "disabled" : ""} data-page="prev">Prev</button>
-        ${Array.from({ length: totalPages }, (_, i) =>
-          `<button class="${i + 1 === currentPage ? "active" : ""}" data-page="${i + 1}">${i + 1}</button>`).join("")}
-        <button ${currentPage === totalPages ? "disabled" : ""} data-page="next">Next</button>`;
-    }
-
-    document.getElementById("pageButtons").addEventListener("click", (e) => {
-      const btn = e.target.closest("button");
-      if (!btn || btn.disabled) return;
-      const p = btn.dataset.page;
-      if (p === "prev") currentPage--;
-      else if (p === "next") currentPage++;
-      else currentPage = Number(p);
-      render();
+    var grid = new ej2.grids.Grid({
+      dataSource: employeeData,
+      columns: [
+        { field: 'OrderID',  headerText: 'Order ID',  width: 120, textAlign: 'Right', type: 'number' },
+        { field: 'Customer', headerText: 'Customer',  width: 130 },
+        { field: 'City',     headerText: 'City',      width: 150 },
+        { field: 'Country',  headerText: 'Country',   width: 150 },
+        { field: 'Total',    headerText: 'Total',     width: 130, textAlign: 'Right', format: 'C2' }
+      ],
+      allowPaging: true,
+      pageSettings: { pageSize: 5, pageSizes: [3, 5, 10] },
+      allowSorting: true
     });
 
-    render();
+    grid.appendTo('#grid');
   </script>
 </body>
 </html>
