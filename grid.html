@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Data Grid</title>
+    <link href="https://cdn.syncfusion.com/ej2/28.1.33/material.css" rel="stylesheet" />
+    <script src="https://cdn.syncfusion.com/ej2/28.1.33/dist/ej2.min.js"></script>
+</head>
+<body>
+    <div style="margin: 40px;">
+        <h2>Employee Grid (10 records)</h2>
+        <div id="Grid"></div>
+    </div>
+
+    <script>
+        var employeeData = [
+            { EmployeeID: 1, Name: 'Alice Johnson',   Role: 'Developer',   City: 'New York',     Salary: 85000 },
+            { EmployeeID: 2, Name: 'Bob Smith',      Role: 'Designer',    City: 'Chicago',      Salary: 72000 },
+            { EmployeeID: 3, Name: 'Carol White',     Role: 'Manager',     City: 'San Diego',   Salary: 105000 },
+            { EmployeeID: 4, Name: 'Daniel Brown',    Role: 'Developer',   City: 'Austin',      Salary: 90000 },
+            { EmployeeID: 5, Name: 'Eva Green',       Role: 'Tester',      City: 'Seattle',     Salary: 68000 },
+            { EmployeeID: 6, Name: 'Frank Harris',    Role: 'Architect',   City: 'Boston',      Salary: 120000 },
+            { EmployeeID: 7, Name: 'Grace Lee',       Role: 'Developer',   City: 'Denver',      Salary: 88000 },
+            { EmployeeID: 8, Name: 'Henry Clark',     Role: 'Support',     City: 'Phoenix',     Salary: 55000 },
+            { EmployeeID: 9, Name: 'Isabel Young',    Role: 'Tester',      City: 'Portland',    Salary: 71000 },
+            { EmployeeID: 10, Name: 'Jack Walker',    Role: 'Manager',     City: 'Miami',       Salary: 112000 }
+        ];
+
+        var grid = new ej.grids.Grid({
+            dataSource: employeeData,
+            allowPaging: true,
+            pageSettings: { pageSize: 5, pageCount: 5 },
+            columns: [
+                { field: 'EmployeeID', headerText: 'Employee ID', width: 130, isPrimaryKey: true },
+                { field: 'Name', headerText: 'Name', width: 150 },
+                { field: 'Role', headerText: 'Role', width: 130 },
+                { field: 'City', headerText: 'City', width: 130 },
+                { field: 'Salary', headerText: 'Salary', width: 130, format: 'C2', textAlign: 'Right' }
+            ]
+        });
+        grid.appendTo('#Grid');
+    </script>
+</body>
+</html>
